@@ -35,7 +35,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
         myContext = myContext1;
         myRL = myRL1;
         this.mainCallBack = mainCallBack;
-        createBlock();          //instantiate block
+        createBlock(0,0);          //instantiate block
         animators.add(currentBlock.animator);
 
     }
@@ -66,13 +66,11 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
                 }
                 break;
             case RIGHT:
-                for (GameBlock b : blockList){
-                    b.moveTo(3, b.by);
-                }
+                CollisionHandler.ShiftBlocks(Direction.RIGHT, blockList);
                 break;
         }
 
-        createBlock();
+        CollisionHandler.GenerateBlock(blockList, this);
     }
 
 
@@ -95,13 +93,10 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
 
     }
 
-    private void createBlock(){
-        GameBlock newBlock = new GameBlock(myContext,(myRandomNum.nextInt(4)), (myRandomNum.nextInt(4)), myRL);//Instantiates new block at coordinates randomly genorated from 0 to 3, image scaling and pixel calculations offset in GameBlock.
+    public void createBlock(int x, int y){
+        GameBlock newBlock = new GameBlock(myContext,x, y, myRL);//Instantiates new block at coordinates randomly genorated from 0 to 3, image scaling and pixel calculations offset in GameBlock.
         currentBlock = newBlock;
         blockList.add(newBlock);
-
-
-
 
     }
 

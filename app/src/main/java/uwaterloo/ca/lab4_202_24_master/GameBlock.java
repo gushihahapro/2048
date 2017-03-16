@@ -48,8 +48,6 @@ public class GameBlock extends ImageView implements Movement {
         blockTV.setTextColor(Color.BLACK);
         blockTV.setTextSize(26);
 
-
-
         setPixelX(myCoordX);
         setPixelY(myCoordY);
 
@@ -79,12 +77,14 @@ public class GameBlock extends ImageView implements Movement {
     @Override
     public void setPixelX(int x) {
         this.setX(x-69);                //Offset to match image coordinate to background(0,0) is actually (-69, -69)
+        this.blockTV.setX(x+105);
         myCoordX = x;                   //sets new image coordinates from animator
     }
 
     @Override
     public void setPixelY(int y) {
         this.setY(y-69);                //Offset to match image coordinate to background(0,0) is actually (-69, -69)
+        this.blockTV.setY(y+75);
         myCoordY = y;                   //sets new image coordinates from animator
     }
 
