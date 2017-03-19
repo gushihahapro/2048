@@ -39,7 +39,7 @@ public class Animator {
 
     }
 
-    public void tick()
+    public boolean tick()
     /**
      * Tick handles the per-cycle animation
      **/
@@ -77,6 +77,12 @@ public class Animator {
             Vy = 0;
         }else{
             contextObject.setPixelY((int)(cy + Vy));
+        }
+
+        if (Vx == 0 && Vy == 0){
+            return true;
+        }else{
+            return false;
         }
     }
 }

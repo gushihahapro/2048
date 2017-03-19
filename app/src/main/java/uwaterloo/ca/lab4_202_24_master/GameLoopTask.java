@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.RelativeLayout;
 
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -28,7 +29,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
     GameBlock currentBlock;
     LinkedList<GameBlock> blockList = new LinkedList<>();
     Random myRandomNum = new Random();
-
+    boolean genBlockOnReady = false;
 
     public GameLoopTask(Activity myActivity1, RelativeLayout myRL1, Context myContext1, GestureCallback mainCallBack ){       //Constructor for gameloopTask
         myActivity = myActivity1;
@@ -47,45 +48,39 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
 
         //state machine to determine target coordinates for appropriate gestures
         // send target coordinates to animator method for each specific movement
-
-        switch (CurrentDirection){
-            case UP:
-                for (GameBlock b : blockList){
-                    b.moveTo(b.bx, 0);
-                }
-                break;
-
-            case DOWN:
-                for (GameBlock b : blockList){
-                    b.moveTo(b.bx, 3);
-                }
-                break;
-            case LEFT:
-                for (GameBlock b : blockList){
-                    b.moveTo(0, b.by);
-                }
-                break;
-            case RIGHT:
-                CollisionHandler.ShiftBlocks(Direction.RIGHT, blockList);
-                break;
-        }
-
-        CollisionHandler.GenerateBlock(blockList, this);
+        blockList = CollisionHandler.ShiftBlocks(direction, blockList);
+        genBlockOnReady = true;
     }
-
-
-
-
 
 
     @Override
     public void run() {
+        final GameLoopTask parent = this;
         this.myActivity.runOnUiThread(
                 new Runnable(){
                     public void run(){
-                    for (GameBlock b : blockList){
-                        b.animator.tick();
-                    }
+                        boolean ready = true;
+                        Vector<GameBlock> del = new Vector<GameBlock>();
+                        for (GameBlock b : blockList){
+                            if (!b.animator.tick()){
+                                ready = false;
+                            }
+                        }
+
+                        if (ready) {
+                            if (genBlockOnReady) {
+                                CollisionHandler.GenerateBlock(blockList, parent);
+                                genBlockOnReady = false;
+                            }
+                            for (GameBlock b : blockList) {
+                                if (!b.ready()){
+                                    del.add(b);
+                                }
+                            }
+                        }
+                        for (GameBlock b : del){
+                            blockList.remove(b);
+                        }
                     }
                 }
         );

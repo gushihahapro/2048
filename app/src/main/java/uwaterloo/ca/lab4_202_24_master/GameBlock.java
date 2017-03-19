@@ -25,7 +25,9 @@ public class GameBlock extends ImageView implements Movement {
     private int blockNum;
     private Random ranNum;
     public TextView blockTV;
-
+    RelativeLayout parentLayout;
+    private boolean destroyOnReady = false;
+    private boolean doubleOnReady = false;
 
     public GameBlock(Context myContext, int bx, int by, RelativeLayout relLayout) {
 
@@ -42,7 +44,7 @@ public class GameBlock extends ImageView implements Movement {
 
         blockTV = new TextView(myContext);
         ranNum = new Random();
-        blockNum = 2^(ranNum.nextInt(3));
+        blockNum = (int) Math.pow(2, ranNum.nextInt(2) + 1);
         blockTV.setText(Integer.toString(blockNum));
         blockTV.bringToFront();
         blockTV.setTextColor(Color.BLACK);
@@ -53,7 +55,7 @@ public class GameBlock extends ImageView implements Movement {
 
         animator = new Animator(this);
 
-
+        parentLayout =  relLayout;
         relLayout.addView(this);
         relLayout.addView(blockTV);
     }
@@ -64,8 +66,29 @@ public class GameBlock extends ImageView implements Movement {
 
     }
 
+    public boolean ready(){
+        if (destroyOnReady){
+            parentLayout.removeViewInLayout(this);
+            parentLayout.removeViewInLayout(blockTV);
+            return false;
+        }
+        if (doubleOnReady){
+            setBlockNum(this.blockNum * 2);
+            doubleOnReady = false;
+        }
+        return true;
+    }
+
+    public void destroy(){
+       destroyOnReady = true;
+    }
+    public void doubleValue(){
+        doubleOnReady = true;
+    }
+
     public void setBlockNum(int num){
         this.blockNum = num;
+        this.blockTV.setText(Integer.toString(num));
 
     }
     public void moveTo(int x, int y){
