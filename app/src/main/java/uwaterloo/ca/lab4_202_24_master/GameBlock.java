@@ -89,7 +89,6 @@ public class GameBlock extends ImageView implements Movement {
     public void setBlockNum(int num){
         this.blockNum = num;
         this.blockTV.setText(Integer.toString(num));
-
     }
     public void moveTo(int x, int y){
         this.animator.setTarget(x * blockLayoutIncrement, y * blockLayoutIncrement);
@@ -100,7 +99,19 @@ public class GameBlock extends ImageView implements Movement {
     @Override
     public void setPixelX(int x) {
         this.setX(x-69);                //Offset to match image coordinate to background(0,0) is actually (-69, -69)
-        this.blockTV.setX(x+105);
+        //center for 2 digit numbers
+        if(this.blockNum > 9 && this.blockNum < 100){
+            this.blockTV.setX(myCoordX+82);
+        }
+        //center for 3 digit numbers
+        else if(this.blockNum >= 100 && this.blockNum < 1000){
+            this.blockTV.setX(myCoordX+63);
+        }
+        //center for 4 digit numbers
+        else if(this.blockNum >= 1000 && this.blockNum < 10000){
+            this.blockTV.setX((myCoordX+105)/2);
+        }
+        else this.blockTV.setX(x+105);
         myCoordX = x;                   //sets new image coordinates from animator
     }
 
