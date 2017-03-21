@@ -190,9 +190,8 @@ public class CollisionHandler {
         }}
         if (freeBlocks == 0){
             //INSERT LOSE SCREEN HERE
-            GameOver.setText("LOSE");
             GameOver.setVisibility(View.VISIBLE);
-
+            GameOver.bringToFront();
 
             return;
         }
