@@ -32,17 +32,17 @@ public class GameBlock extends ImageView implements Movement {
     public GameBlock(Context myContext, int bx, int by, RelativeLayout relLayout) {
 
         super(myContext);
-        this.setImageResource(R.drawable.gameblock);
+        this.setImageResource(R.drawable.gameblock);        // instantiate block image from drawable folder
 
-        this.setScaleX(IMAGE_SCALE);
+        this.setScaleX(IMAGE_SCALE);                        //scale block image to fit background
         this.setScaleY(IMAGE_SCALE);
-        this.bx=bx;
+        this.bx=bx;                                         // store block grid coordinate into bx an by
         this.by=by;
 
-        this.myCoordX = blockLayoutIncrement*bx;
+        this.myCoordX = blockLayoutIncrement*bx;            //convert bx and by to pixel coordinates
         this.myCoordY = blockLayoutIncrement*by;
 
-        blockTV = new TextView(myContext);
+        blockTV = new TextView(myContext);                  //instantiate, generate and set up TextView for numbers on box
         ranNum = new Random();
         blockNum = (int) Math.pow(2, ranNum.nextInt(2) + 1);
         blockTV.setText(Integer.toString(blockNum));
@@ -50,7 +50,7 @@ public class GameBlock extends ImageView implements Movement {
         blockTV.setTextColor(Color.BLACK);
         blockTV.setTextSize(26);
 
-        setPixelX(myCoordX);
+        setPixelX(myCoordX);                        //send coordinates to be cenetered
         setPixelY(myCoordY);
 
         animator = new Animator(this);
