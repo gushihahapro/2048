@@ -40,7 +40,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
         myContext = myContext1;
         myRL = myRL1;
         this.mainCallBack = mainCallBack;
-        createBlock(0,0);          //instantiate block
+        CollisionHandler.GenerateBlock(blockList, this);
         animators.add(currentBlock.animator);
 
         GAMEOVER = new TextView(myContext);
@@ -72,7 +72,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
                 new Runnable(){
                     public void run(){
                         boolean ready = true;
-                        Vector<GameBlock> del = new Vector<GameBlock>();
+                        Vector<GameBlock> del = new Vector<>();
                         for (GameBlock b : blockList){
                             if (!b.animator.tick()){
                                 ready = false;
