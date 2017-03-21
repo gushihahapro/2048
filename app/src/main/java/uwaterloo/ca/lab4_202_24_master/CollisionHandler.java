@@ -1,7 +1,10 @@
 package uwaterloo.ca.lab4_202_24_master;
 
+import android.content.Intent;
 import android.util.Log;
 import android.util.Pair;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -118,6 +121,8 @@ public class CollisionHandler {
                 sector.set(i, fillers.get(i));
             }
         }
+
+
         return sector;
     }
     public static LinkedList<GameBlock> ShiftBlocks(GestureCallback.Direction direction, LinkedList<GameBlock> gameBlocks){
@@ -175,7 +180,7 @@ public class CollisionHandler {
         }
         return ret;
     }
-    public static void GenerateBlock(LinkedList<GameBlock> gameBlocks, GameLoopTask task){
+    public static void GenerateBlock(LinkedList<GameBlock> gameBlocks, GameLoopTask task, TextView GameOver){
         boolean[][] grid = new boolean[4][4];
         Random rand = new Random();
         int freeBlocks = 16;
@@ -185,6 +190,10 @@ public class CollisionHandler {
         }}
         if (freeBlocks == 0){
             //INSERT LOSE SCREEN HERE
+            GameOver.setText("LOSE");
+            GameOver.setVisibility(View.VISIBLE);
+
+
             return;
         }
 

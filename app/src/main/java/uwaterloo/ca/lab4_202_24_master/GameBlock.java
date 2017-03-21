@@ -2,6 +2,7 @@ package uwaterloo.ca.lab4_202_24_master;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,8 +29,9 @@ public class GameBlock extends ImageView implements Movement {
     RelativeLayout parentLayout;
     private boolean destroyOnReady = false;
     private boolean doubleOnReady = false;
+    private TextView GAMEOVER;
 
-    public GameBlock(Context myContext, int bx, int by, RelativeLayout relLayout) {
+    public GameBlock(Context myContext, int bx, int by, RelativeLayout relLayout, TextView GameOver) {
 
         super(myContext);
         this.setImageResource(R.drawable.gameblock);        // instantiate block image from drawable folder
@@ -50,14 +52,17 @@ public class GameBlock extends ImageView implements Movement {
         blockTV.setTextColor(Color.BLACK);
         blockTV.setTextSize(26);
 
-        setPixelX(myCoordX);                        //send coordinates to be cenetered
+        setPixelX(myCoordX);                        //send coordinates to be centered
         setPixelY(myCoordY);
 
         animator = new Animator(this);
 
-        parentLayout =  relLayout;
+        parentLayout =  relLayout;          //add Views to Relative Layout
         relLayout.addView(this);
         relLayout.addView(blockTV);
+
+        this.GAMEOVER = GameOver;       //pass gameover text view
+
     }
 
 
@@ -89,6 +94,12 @@ public class GameBlock extends ImageView implements Movement {
     public void setBlockNum(int num){
         this.blockNum = num;
         this.blockTV.setText(Integer.toString(num));
+        if(num == 256){                                     // Check if game has been won
+            GAMEOVER.setText("WIN");
+            GAMEOVER.setVisibility(View.VISIBLE);
+
+
+        }
     }
     public void moveTo(int x, int y){
         this.animator.setTarget(x * blockLayoutIncrement, y * blockLayoutIncrement);
