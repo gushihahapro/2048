@@ -21,9 +21,13 @@ import static uwaterloo.ca.lab4_202_24_master.GestureCallback.Direction.UP;
  */
 
 public class CollisionHandler {
+    //Merge vectors together
     public static Vector<GameBlock> merge(Vector<GameBlock> sector, GestureCallback.Direction direction){
-        Vector<GameBlock> fillers = new Vector<>(4);
+        //Ex. 2222 merges to 44XX and if left and XX44 if right, similar for up/down
+        Vector<GameBlock> fillers = new Vector<>(4);    //buffer for to-be-deleted items
         int delta = 0;
+        //Shift everything as far as possible without merging to begin
+        //Ex. 24X4 becomes 244X (LEFT) or X244(RIGHT)
         if (direction == LEFT || direction == UP) {
             for (int i = 0; i < sector.size(); ++i) {
                 if (sector.get(i) == null) {
@@ -54,6 +58,7 @@ public class CollisionHandler {
             }
         }
         delta = 0;
+        //Merge blocks finally
         if (direction == LEFT || direction == UP) {
             for (int i = 0; i < sector.size(); ++i) {
                 if (sector.get(i) != null) {
@@ -126,6 +131,7 @@ public class CollisionHandler {
         return sector;
     }
     public static LinkedList<GameBlock> ShiftBlocks(GestureCallback.Direction direction, LinkedList<GameBlock> gameBlocks){
+        //Input blocks into vector grid
         Vector<Vector<GameBlock>> grid = new Vector<>(4);
         for (int i = 0; i < 4; ++i){
             grid.add(new Vector<GameBlock>(4));
@@ -134,10 +140,12 @@ public class CollisionHandler {
             }
         }
 
+        //Load values from linked list
         for (GameBlock gameBlock : gameBlocks){
             grid.get(gameBlock.by).set(gameBlock.bx, gameBlock);
         }
 
+        //Loop through and merge rows/columns depending on direction
         if (direction == LEFT){
             for (int i = 0; i < 4; ++i){
                 grid.set(i, CollisionHandler.merge(grid.get(i), LEFT));
@@ -170,6 +178,7 @@ public class CollisionHandler {
             }
         }
 
+        //Add blocks to linked list and return it
         LinkedList<GameBlock> ret = new LinkedList<>();
         for (int i = 0; i < 4; ++i){
             for (int j = 0; j < 4; ++j){
@@ -180,7 +189,48 @@ public class CollisionHandler {
         }
         return ret;
     }
+    public static boolean NoMergable(LinkedList<GameBlock> gameBlocks){
+        //Checks blocks around to see if there are any blocks still mergable (for lose condition)
+        int[][] grid = new int[4][4];
+        for (GameBlock gb : gameBlocks){
+            grid[gb.bx][gb.by] = gb.getBlockNum();
+        }
+        for (int x = 0; x < 4; ++x){
+            for (int y = 0; y < 4; ++y){
+                for (int dy = -1; dy <= 1; ++dy){
+                    int dx = 0;
+                    if (dx == 0 && dy == 0){
+                        continue;
+                    }
+                    int tx = x + dx;
+                    int ty = y + dy;
+                    if (tx >= 0 && tx <= 3 && ty >=0 && ty <= 3){
+                        if (grid[y][x] == grid[ty][tx]){
+                            Log.d("VAL", String.format("%d, %d", grid[y][x], grid[ty][tx]));
+                            return false;
+                        }
+                    }
+                }
+                for (int dx = -1; dx <= 1; ++dx){
+                    int dy = 0;
+                    if (dx == 0 && dy == 0){
+                        continue;
+                    }
+                    int tx = x + dx;
+                    int ty = y + dy;
+                    if (tx >= 0 && tx <= 3 && ty >=0 && ty <= 3){
+                        if (grid[y][x] == grid[ty][tx]){
+                            Log.d("VAL", String.format("%d, %d", grid[y][x], grid[ty][tx]));
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
     public static void GenerateBlock(LinkedList<GameBlock> gameBlocks, GameLoopTask task, TextView GameOver){
+        //Finds an empty slot to put new gameblock in
         boolean[][] grid = new boolean[4][4];
         Random rand = new Random();
         int freeBlocks = 16;
@@ -189,19 +239,21 @@ public class CollisionHandler {
             freeBlocks--;
         }}
         if (freeBlocks == 0){
-            //INSERT LOSE SCREEN HERE
-            GameOver.setVisibility(View.VISIBLE);
-            GameOver.bringToFront();
+            if (CollisionHandler.NoMergable(gameBlocks)) {
+                //INSERT LOSE SCREEN HERE
+                GameOver.setVisibility(View.VISIBLE);
+                GameOver.bringToFront();
+                task.enable = false;
+            }
 
             return;
         }
-
         int newBlockIndex = rand.nextInt(freeBlocks);
 
         int newX = 0, newY = 0;
         boolean found = false;
-        for (int i = 0; i < 4 && !found; ++i){
-            for (int j = 0; j < 4 && !found; ++j){
+        for (int i = 0; i < 4 && !found; ++i) {
+            for (int j = 0; j < 4 && !found; ++j) {
                 if (!grid[i][j]) {
                     if (newBlockIndex == 0) {
                         newY = i;
@@ -213,5 +265,6 @@ public class CollisionHandler {
             }
         }
         task.createBlock(newX, newY);
+
     }
 }

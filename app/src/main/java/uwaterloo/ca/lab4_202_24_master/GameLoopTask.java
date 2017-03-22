@@ -37,6 +37,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
     boolean genBlockOnReady = false;
     public TextView GAMEOVER;
     RelativeLayout parentLayout;
+    boolean enable = true;
 
 
     public GameLoopTask(Activity myActivity1, RelativeLayout myRL1, Context myContext1, GestureCallback mainCallBack ){       //Constructor for gameloopTask
@@ -67,15 +68,17 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
     }
     @Override
     public void onGestureDetect(Direction direction) {      //Stores current direction returned from FSM in Acceleration handler to Current Direction local variable
-        GAMEOVER.setVisibility(View.INVISIBLE);
-        mainCallBack.onGestureDetect(direction);        //send direction back to main to be outputted onto screen in textview
-        CurrentDirection = direction;
-        Log.d(TAG, "setDirection: " + CurrentDirection);    //logd onto console for testing
+        if (enable) {
+            GAMEOVER.setVisibility(View.INVISIBLE);
+            mainCallBack.onGestureDetect(direction);        //send direction back to main to be outputted onto screen in textview
+            CurrentDirection = direction;
+            Log.d(TAG, "setDirection: " + CurrentDirection);    //logd onto console for testing
 
-        //state machine to determine target coordinates for appropriate gestures
-        // send target coordinates to animator method for each specific movement
-        blockList = CollisionHandler.ShiftBlocks(direction, blockList);
-        genBlockOnReady = true;
+            //state machine to determine target coordinates for appropriate gestures
+            // send target coordinates to animator method for each specific movement
+            blockList = CollisionHandler.ShiftBlocks(direction, blockList);
+            genBlockOnReady = true;
+        }
     }
 
 
@@ -85,27 +88,36 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
         this.myActivity.runOnUiThread(
                 new Runnable(){
                     public void run(){
-                        boolean ready = true;
-                        Vector<GameBlock> del = new Vector<>();
-                        for (GameBlock b : blockList){
-                            if (!b.animator.tick()){
-                                ready = false;
-                            }
-                        }
-
-                        if (ready) {
-                            if (genBlockOnReady) {
-                                CollisionHandler.GenerateBlock(blockList, parent, GAMEOVER);
-                                genBlockOnReady = false;
-                            }
+                        if (enable) {
+                            boolean ready = true;
+                            Vector<GameBlock> del = new Vector<>();
                             for (GameBlock b : blockList) {
-                                if (!b.ready()){
-                                    del.add(b);
+                                if (!b.animator.tick()) {
+                                    ready = false;
+                                }
+                                if(b.getBlockNum() == 2048){                                     // Check if game has been won
+                                    GAMEOVER.setText("WIN");
+                                    GAMEOVER.setVisibility(View.VISIBLE);
+                                    GAMEOVER.bringToFront();
+                                    enable = false;
+                                    return;
                                 }
                             }
-                        }
-                        for (GameBlock b : del){
-                            blockList.remove(b);
+
+                            if (ready) {
+                                for (GameBlock b : blockList) {
+                                    if (!b.ready()) {
+                                        del.add(b);
+                                    }
+                                }
+                                for (GameBlock b : del) {
+                                    blockList.remove(b);
+                                }
+                                if (genBlockOnReady) {
+                                    CollisionHandler.GenerateBlock(blockList, parent, GAMEOVER);
+                                    genBlockOnReady = false;
+                                }
+                            }
                         }
                     }
                 }

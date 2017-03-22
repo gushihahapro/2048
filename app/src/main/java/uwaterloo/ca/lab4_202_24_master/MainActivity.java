@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, GestureCallback{
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     private AccelerationHandler accelerationHandler;
+    public boolean TESTING = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,24 +63,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 //testing for timer class
         Timer timerTest = new Timer();
-        GameLoopTask testTask1 = new GameLoopTask(this, layout, getApplicationContext(), this);
+        final GameLoopTask testTask1 = new GameLoopTask(this, layout, getApplicationContext(), this);
         timerTest.schedule(testTask1, 25, 25);
+        if (TESTING) {
+            Timer testTimer = new Timer();
 
+            TimerTask ttask = new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        testTask1.onGestureDetect(Direction.RIGHT);
+                        Thread.sleep(50);
+                        testTask1.onGestureDetect(Direction.DOWN);
+                        Thread.sleep(50);
+                        testTask1.onGestureDetect(Direction.LEFT);
+                        Thread.sleep(50);
+                        testTask1.onGestureDetect(Direction.UP);
+                    } catch (Exception e) {
+
+                    }
+                }
+            };
+            testTimer.schedule(ttask, 0, 200);
+        }
 
         accelerationHandler = new AccelerationHandler(getApplicationContext(), layout, "acceleration", testTask1); //send testtask1 to acceleration handler
     }
 
     @Override
-    public void onGestureDetect(Direction direction){
-        if (direction == Direction.RIGHT){
-            textViewGestureStatus.setText("RIGHT");
-        }else if (direction == Direction.LEFT){
-            textViewGestureStatus.setText("LEFT");
-        }else if (direction == Direction.UP){
-            textViewGestureStatus.setText("UP");
-        }else if (direction == Direction.DOWN){
-            textViewGestureStatus.setText("DOWN");
-        }
+    public void onGestureDetect(final Direction direction){
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (direction == Direction.RIGHT){
+                            textViewGestureStatus.setText("RIGHT");
+                        }else if (direction == Direction.LEFT){
+                            textViewGestureStatus.setText("LEFT");
+                        }else if (direction == Direction.UP){
+                            textViewGestureStatus.setText("UP");
+                        }else if (direction == Direction.DOWN){
+                            textViewGestureStatus.setText("DOWN");
+                        }
+                    }
+                }
+        );
+
     }
 
 

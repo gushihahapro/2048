@@ -94,12 +94,7 @@ public class GameBlock extends ImageView implements Movement {
     public void setBlockNum(int num){
         this.blockNum = num;
         this.blockTV.setText(Integer.toString(num));
-        if(num == 256){                                     // Check if game has been won
-            GAMEOVER.setText("WIN");
-            GAMEOVER.setVisibility(View.VISIBLE);
 
-
-        }
     }
     public void moveTo(int x, int y){
         this.animator.setTarget(x * blockLayoutIncrement, y * blockLayoutIncrement);
