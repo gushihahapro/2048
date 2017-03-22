@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     private AccelerationHandler accelerationHandler;
-    public boolean TESTING = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Timer timerTest = new Timer();
         final GameLoopTask testTask1 = new GameLoopTask(this, layout, getApplicationContext(), this);
         timerTest.schedule(testTask1, 25, 25);
-        if (TESTING) {
+        if (Testing.TESTING) {
             Timer testTimer = new Timer();
 
             TimerTask ttask = new TimerTask() {
@@ -73,18 +72,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 public void run() {
                     try {
                         testTask1.onGestureDetect(Direction.RIGHT);
-                        Thread.sleep(50);
+                        Thread.sleep(500);
                         testTask1.onGestureDetect(Direction.DOWN);
-                        Thread.sleep(50);
+                        Thread.sleep(500);
                         testTask1.onGestureDetect(Direction.LEFT);
-                        Thread.sleep(50);
+                        Thread.sleep(500);
                         testTask1.onGestureDetect(Direction.UP);
                     } catch (Exception e) {
 
                     }
                 }
             };
-            testTimer.schedule(ttask, 0, 200);
+            testTimer.schedule(ttask, 0, 2000);
         }
 
         accelerationHandler = new AccelerationHandler(getApplicationContext(), layout, "acceleration", testTask1); //send testtask1 to acceleration handler

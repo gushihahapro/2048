@@ -64,6 +64,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
 
         this.mainCallBack = mainCallBack;
         CollisionHandler.GenerateBlock(blockList, this, GAMEOVER);
+
         animators.add(currentBlock.animator);
     }
     @Override
@@ -95,7 +96,7 @@ public class GameLoopTask extends TimerTask implements GestureCallback {
                                 if (!b.animator.tick()) {
                                     ready = false;
                                 }
-                                if(b.getBlockNum() == 2048){                                     // Check if game has been won
+                                if(b.getBlockNum() == 256){                                     // Check if game has been won
                                     GAMEOVER.setText("WIN");
                                     GAMEOVER.setVisibility(View.VISIBLE);
                                     GAMEOVER.bringToFront();

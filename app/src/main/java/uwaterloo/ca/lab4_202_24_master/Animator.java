@@ -51,8 +51,10 @@ public class Animator {
         int dx = targetX - cx;
         int dy = targetY - cy;
 
-        final float ACCELERATION = (float) 2;       //Acceleration constant
-
+        float ACCELERATION = (float) 4;       //Acceleration constant
+        if (Testing.TESTING){
+            ACCELERATION = 16;
+        }
         //If the delta is non-zero, add acceleration to the velocity
         if (dx != 0) {
             Vx += ACCELERATION * (dx < 0 ? -1 : 1);
