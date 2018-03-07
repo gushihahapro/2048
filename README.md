@@ -7,4 +7,4 @@ A reproduction of the 2048 game using left, right, up, and down sensor readings 
 * Replayable after game concludes
 
 ### Built With
-Java, XML, Android Studio
+Java/Android, XML
